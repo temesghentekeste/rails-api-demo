@@ -7,9 +7,9 @@ class BooksController < ApplicationController
     book = Book.new(book_params)
 
     if book.save
-      render json: book, status: :created
+      render json: book, status: :created #201
     else
-      render json: book.errors, status: :unprocessable_entity
+      render json: book.errors, status: :unprocessable_entity #422
     end
   end
 

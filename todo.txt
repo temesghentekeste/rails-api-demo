@@ -65,7 +65,7 @@ step IV: update the create action
         book = Book.new(book_params)
 
         if book.save
-        render json: book, status: :created
+        render json: book, status: :created 
         else
         render json: book.errors, status: :unprocessable_entity
         end
@@ -78,3 +78,8 @@ step IV: update the create action
     end
 step V: make curl request as follows
   curl --header "Content-Type: application/json" --request POST --data '{"author": "temesghen tekeste", "title": "Coding Challenges"}' http://localhost:3000/books
+
+
+
+4. HTTP Status Codes
+https://gist.github.com/mlanett/a31c340b132ddefa9cca
