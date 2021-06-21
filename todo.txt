@@ -32,3 +32,49 @@ Generating the Book Model:
         invoke    test_unit
         create      test/models/book_test.rb
         create      test/fixtures/books.yml
+
+3. Creating a POST Endpoint
+ step I. create a create action
+ step II. update the routes, example: resources :books, only: [:index, :create]
+ step III. make simple curl request:
+  curl --request POST http://localhost:3000/books -v
+    *   Trying 127.0.0.1:3000...
+    * TCP_NODELAY set
+    * Connected to localhost (127.0.0.1) port 3000 (#0)
+    > POST /books HTTP/1.1
+    > Host: localhost:3000
+    > User-Agent: curl/7.68.0
+    > Accept: */*
+    > 
+    * Mark bundle as not supporting multiuse
+    < HTTP/1.1 204 No Content
+    < X-Frame-Options: SAMEORIGIN
+    < X-XSS-Protection: 1; mode=block
+    < X-Content-Type-Options: nosniff
+    < X-Download-Options: noopen
+    < X-Permitted-Cross-Domain-Policies: none
+    < Referrer-Policy: strict-origin-when-cross-origin
+    < Cache-Control: no-cache
+    < X-Request-Id: b44e2f4d-f6d5-4d27-bb2f-940d15f500d8
+    < X-Runtime: 0.004630
+    < 
+    * Connection #0 to host localhost left intact
+
+step IV: update the create action
+    def create 
+        book = Book.new(book_params)
+
+        if book.save
+        render json: book, status: :created
+        else
+        render json: book.errors, status: :unprocessable_entity
+        end
+    end
+
+    private
+
+    def book_params
+        params.require(:book).permit(:title, :author)
+    end
+step V: make curl request as follows
+  curl --header "Content-Type: application/json" --request POST --data '{"author": "temesghen tekeste", "title": "Coding Challenges"}' http://localhost:3000/books
