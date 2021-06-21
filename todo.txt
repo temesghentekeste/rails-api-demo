@@ -1,6 +1,9 @@
 1. routes: example, resources :books
 2. Basic controllers and models
- example: rails g controller Books index
+ example: 
+ 
+ step I Generating Books Controller
+    rails g controller Books index
         Running via Spring preloader in process 27143
             create  app/controllers/books_controller.rb
             route  get 'books/index'
@@ -19,12 +22,13 @@ curl http://localhost:3000/books -v
     * Mark bundle as not supporting multiuse
     < HTTP/1.1 204 No Content
 
+step II.
 Generating the Book Model:
-rails g model Book title:string author:title
-Running via Spring preloader in process 30151
-      invoke  active_record
-      create    db/migrate/20210621174807_create_books.rb
-      create    app/models/book.rb
-      invoke    test_unit
-      create      test/models/book_test.rb
-      create      test/fixtures/books.yml
+    rails g model Book title:string author:string
+    Running via Spring preloader in process 30151
+        invoke  active_record
+        create    db/migrate/20210621174807_create_books.rb
+        create    app/models/book.rb
+        invoke    test_unit
+        create      test/models/book_test.rb
+        create      test/fixtures/books.yml
