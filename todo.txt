@@ -335,3 +335,48 @@ Sample Request:
             end
 
         end
+************************************************************************************
+************************************************************************************
+10. POST and DESTROY Tests
+    1. Post test 
+        describe 'POST /books' do
+            it 'creates a new book' do
+            expect{
+                post '/api/v1/books', params: {book: {
+                    title: 'The Martian',
+                    author: 'Andy Wier'
+                }}
+            }.to change { Book.count }.from(0).to(1)
+
+                expect(response).to have_http_status(:created) #201
+            end
+        end
+    1. Destroy Test
+
+     describe 'POST /books' do
+        it 'creates a new book' do
+           expect{
+            post '/api/v1/books', params: {book: {
+                title: 'The Martian',
+                author: 'Andy Wier'
+            }}
+           }.to change { Book.count }.from(0).to(1)
+
+            expect(response).to have_http_status(:created) #201
+        end
+    end
+
+    describe 'DELETE /books/:id' do
+        let!(:book) { FactoryBot.create(:book, title: 'Dummy Book', author: 'Dummy Author')}
+        
+        it 'deletes a book' do
+           
+            expect {
+                delete "/api/v1/books/#{book.id}"
+            }.to change { Book.count }.from(1).to(0)
+
+
+            expect(response).to have_http_status(:no_content)
+        end
+    end
+
