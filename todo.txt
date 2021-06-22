@@ -86,3 +86,38 @@ https://gist.github.com/mlanett/a31c340b132ddefa9cca
 
 
 5. Active Record Vaildation
+class Book < ApplicationRecord
+    validates :author, presence: true, length: { minimum: 3}
+    validates :title, presence: true, length: { minimum: 3}
+end
+
+curl --header "Content-Type-vapplication/json" --request POST --data '{"title": "JK", "author": "HP"}' http://localhost:3000/books  
+Note: Unnecessary use of -X or --request, POST is already inferred.
+*   Trying 127.0.0.1:3000...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 3000 (#0)
+> POST /books HTTP/1.1
+> Host: localhost:3000
+> User-Agent: curl/7.68.0
+> Accept: */*
+> Content-Type: application/json
+> Content-Length: 31
+> 
+* upload completely sent off: 31 out of 31 bytes
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 422 Unprocessable Entity
+< X-Frame-Options: SAMEORIGIN
+< X-XSS-Protection: 1; mode=block
+< X-Content-Type-Options: nosniff
+< X-Download-Options: noopen
+< X-Permitted-Cross-Domain-Policies: none
+< Referrer-Policy: strict-origin-when-cross-origin
+< Content-Type: application/json; charset=utf-8
+< Vary: Accept
+< Cache-Control: no-cache
+< X-Request-Id: 1175173c-9620-4436-ac29-e3f9573147e9
+< X-Runtime: 0.005547
+< Transfer-Encoding: chunked
+< 
+* Connection #0 to host localhost left intact
+{"author":["is too short (minimum is 3 characters)"],"title":["is too short (minimum is 3 characters)"]
