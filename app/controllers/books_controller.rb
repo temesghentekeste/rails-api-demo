@@ -1,4 +1,5 @@
 class BooksController < ApplicationController
+
   def index
     render json: Book.all
   end
@@ -17,11 +18,14 @@ class BooksController < ApplicationController
     Book.find(params[:id]).destroy!
 
     head :no_content
-  end
 
-  private
-
-  def book_params
-    params.require(:book).permit(:title, :author)
   end
+    
+    private
+    
+    def book_params
+      params.require(:book).permit(:title, :author)
+    end
+    
+  
 end
