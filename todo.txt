@@ -245,3 +245,22 @@ Sample Request:
     < Content-Length: 14080
     < 
     {"status":404,"error":"Not Found","exception":"#\u003cActiveRecord::RecordNotFound: Couldn't find Book with 'id'=6\u003e","traces":{"Application Trace":[{"exception_object_id":26900,"id":1,"trace":"app/controllers/books_controller.rb:18:in `destroy
+
+************************************************************************************
+************************************************************************************
+8. Namespacing and versioning
+   Example: 
+   Step I.
+        Rails.application.routes.draw do
+            namespace :api do
+                namespace :v1 do 
+                resources :books, only: [:index, :create, :destroy]
+                end
+            end
+        end
+
+    Step II.
+     Put the books cotroller inside controllers/api/v1 folder 
+    Step III: test 
+     curl http://localhost:3000/api/v1/books
+[{"id":1,"title":"Rails API","author":"Temesghen","created_at":"2021-06-21T17:59:03.891Z","updated_at":"2021-06-21T17:59:03.891Z"},{"id":2,"title":"Bleachers","author":"John Grisham","created_at":"2021-06-21T20:48:31.868Z","updated_at":"2021-06-21T20:48:31.868Z"},{"id":3,"title":"Coding Challenges","author":"temesghen tekeste","created_at":"2021-06-21T20:58:18.316Z","updated_at":"2021-06-21T20:58:18.316Z"},{"id":7,"title":"JK Harwing","author":"Harry Potter I","created_at":"2021-06-22T08:56:56.268Z","updated_at":"2021-06-22T08:56:56.
