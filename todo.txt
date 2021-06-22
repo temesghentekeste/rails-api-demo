@@ -83,3 +83,6 @@ step V: make curl request as follows
 
 4. HTTP Status Codes
 https://gist.github.com/mlanett/a31c340b132ddefa9cca
+
+
+5. Active Record Vaildation
