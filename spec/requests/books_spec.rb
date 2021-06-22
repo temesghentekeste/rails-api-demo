@@ -3,9 +3,12 @@ require 'rails_helper'
 describe 'Books API', type: :request do
 
     describe 'GET /books' do
+        before do
+            FactoryBot.create(:book, title: '1984', author: 'George Orwell')
+            FactoryBot.create(:book, title: 'Current times', author: 'Temesghen')
+            
+        end
           it 'returns all books' do 
-                FactoryBot.create(:book, title: '1984', author: 'George Orwell')
-                FactoryBot.create(:book, title: 'Current times', author: 'Temesghen')
 
                 get '/api/v1/books'
 
