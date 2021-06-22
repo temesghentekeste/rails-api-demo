@@ -1,4 +1,4 @@
 class Book < ApplicationRecord
-    validates :author, precence: true, legth: { minimum: 3}
-    validates :title, precence: true, legth: { minimum: 3}
+    validates :author, presence: true, length: { minimum: 3}
+    validates :title, presence: true, length: { minimum: 3}
 end
