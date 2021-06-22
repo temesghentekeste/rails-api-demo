@@ -292,3 +292,46 @@ Sample Request:
 
     end
    ````
+
+   # bundle exec rspec
+
+   Sample out from the terminal
+    Books API
+        returns all books
+
+        Finished in 0.03668 seconds (files took 0.84372 seconds to load)
+        1 example, 0 failures
+
+ Step V: Install factory_bot gem inside development and test block
+   1.  group :development, :test do
+        # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+        gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+        gem 'rspec-rails'
+        gem 'factory_bot_rails'
+
+    end
+
+    2. create factories folder inside spec dirctory
+    3. inside factories folder create book.rb
+    book.rb 
+        FactoryBot.define do
+            factory :book do
+                
+            end
+        end
+    4. our test becomes:
+        require 'rails_helper'
+
+        describe 'Books API', type: :request do
+            it 'returns all books' do 
+                FactoryBot.create(:book, title: '1984', author: 'George Orwell')
+                FactoryBot.create(:book, title: 'Current times', author: 'Temesghen')
+                
+                get '/api/v1/books'
+
+                expect(response).to have_http_status(:success)
+
+                expect(JSON.parse(response.body).size).to eq(2)
+            end
+
+        end
