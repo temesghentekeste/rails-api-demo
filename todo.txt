@@ -380,3 +380,37 @@ Sample Request:
         end
     end
 
+*******************************************************************************
+*******************************************************************************
+11. Associations
+
+1. split Author from Book
+    rails g model Author first_name:string last_name:string age:integer
+    Running via Spring preloader in process 52930
+        invoke  active_record
+        create    db/migrate/20210622211851_create_authors.rb
+        create    app/models/author.rb
+        invoke    rspec
+        create      spec/models/author_spec.rb
+        invoke      factory_bot
+        create        spec/factories/authors.rb
+2. Create association 
+rails g migration add_author_to_books author:references
+Running via Spring preloader in process 53237
+      invoke  active_record
+      create    db/migrate/20210622212205_add_author_to_books.rb
+
+3. delete the null and foriegn key constraint from the migration and run the migration
+rails db:migrate
+== 20210622212205 AddAuthorToBooks: migrating =================================
+-- add_reference(:books, :author)
+   -> 0.0043s
+== 20210622212205 AddAuthorToBooks: migrated (0.0048s) ========================
+
+4. remove author from string
+ rails g migration remove_author_from_books author:string
+Running via Spring preloader in process 54138
+      invoke  active_record
+      create    db/migrate/20210622212951_remove_author_from_books.rb
+
+      run migration
