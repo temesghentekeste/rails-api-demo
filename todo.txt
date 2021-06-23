@@ -721,3 +721,188 @@ describe 'Books API', type: :request do
   
 
 end
+
+********************************************************************************
+********************************************************************************
+15. API Pagination
+
+step I: create additional tests and our tests becomes something like this:
+        require 'rails_helper'
+
+        describe 'Books API', type: :request do
+            let(:first_author) { FactoryBot.create(:author, first_name:'George', last_name: 'Orwell', age: 46 )}
+            let(:second_author) { FactoryBot.create(:author, first_name:'Temesghen', last_name: 'Bahta', age: 32 )}
+
+            describe 'GET /books' do
+                before do
+                    FactoryBot.create(:book, title: '1984', author: first_author)
+                    FactoryBot.create(:book, title: 'Current times', author: second_author)
+                    
+                end
+                it 'returns all books' do 
+
+                        get '/api/v1/books'
+                        
+                        expect(response).to have_http_status(:success)
+                        
+                        expect(response_body.size).to eq(2)
+                        
+                        expect(response_body).to eq([
+                            {
+                                "id" =>  1,
+                                "title" => "1984",
+                                "author_name" =>  "George Orwell",
+                                "author_age" =>  46
+                            },
+                            {
+                                "id" =>  2,
+                                "title" => "Current times",
+                                "author_name" =>  "Temesghen Bahta",
+                                "author_age" =>  32
+                            }
+                            ])
+                        end
+                        
+                it 'returns a subset of books based on limit' do
+                    get '/api/v1/books', params: { limit: 1}
+
+                    expect(response).to have_http_status(:success)
+                
+                    expect(response_body.size).to eq(1)
+                    
+                    expect(response_body).to eq([
+                        {
+                            "id" =>  1,
+                            "title" => "1984",
+                            "author_name" =>  "George Orwell",
+                            "author_age" =>  46
+                        },
+                    
+                        ])
+                end
+
+                it 'returns a subset of books based on limit and offset' do
+                    get '/api/v1/books', params: { limit: 1, offset: 1}
+                    expect(response).to have_http_status(:success)
+                
+                    expect(response_body.size).to eq(1)
+                    
+                    expect(response_body).to eq([
+                        {
+                            "id" =>  2,
+                            "title" => "Current times",
+                            "author_name" =>  "Temesghen Bahta",
+                            "author_age" =>  32
+                        }
+                    
+                        ])
+                    
+                end
+
+            end
+
+            describe 'POST /books' do
+                it 'creates a new book' do
+                expect{
+                    post '/api/v1/books', params: {
+                        book: { title: 'The Martian'},
+                        author: {first_name: 'Andy', last_name: 'Weir', age: 46}
+                    }
+                }.to change { Book.count }.from(0).to(1)
+
+                    expect(response).to have_http_status(:created) #201
+                    expect(Author.count).to eq(1)
+
+                    expect(response_body).to eq({
+                        "id" =>  1,
+                        "title" => "The Martian",
+                        "author_name" =>  "Andy Weir",
+                        "author_age" =>  46
+
+                    })
+                end
+            end
+
+            describe 'DELETE /books/:id' do
+                let!(:book) { FactoryBot.create(:book, title: 'Dummy Book', author: first_author)}
+                
+                it 'deletes a book' do
+                
+                    expect {
+                        delete "/api/v1/books/#{book.id}"
+                    }.to change { Book.count }.from(1).to(0)
+
+
+                    expect(response).to have_http_status(:no_content)
+                end
+            end
+        
+
+        end
+
+step II. add contrller test for Books controller 
+    require 'rails_helper'
+
+    RSpec.describe Api::V1::BooksController, type: :controller do
+
+        it 'returns a max of limit of 100' do
+            expect(Book).to receive(:limit).with(100).and_call_original
+            get :index, params: { limit: 999}
+            
+        end
+    end
+
+step III: modify the books controller:
+    module Api
+    module V1
+        class BooksController < ApplicationController
+
+        MAX_PAGINATION_LIMIT = 100
+
+        def index
+            books = Book.all
+            books = Book.limit(limit).offset(params[:offset])
+            
+            render json: BooksRepresenter.new(books).as_json 
+        end
+
+        def create 
+            # binding.irb
+            author = Author.create!(author_params)
+            book = Book.new(book_params.merge(author_id: author.id))
+
+            if book.save
+            render json: BookRepresenter.new(book).as_json , status: :created #201
+            else
+            render json: book.errors, status: :unprocessable_entity #422
+            end
+        end
+
+        def destroy 
+            Book.find(params[:id]).destroy!
+
+            head :no_content
+
+        end
+            
+            private
+
+            def limit
+            [
+                params.fetch(:limit, MAX_PAGINATION_LIMIT).to_i,
+                MAX_PAGINATION_LIMIT
+            ].min
+            end
+            
+            def author_params
+            params.require(:author).permit(:first_name, :last_name, :age)
+            end
+
+            def book_params
+            params.require(:book).permit(:title, :author)
+            end
+            
+        
+        end
+    end
+    end
