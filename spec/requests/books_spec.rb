@@ -13,11 +13,11 @@ describe 'Books API', type: :request do
           it 'returns all books' do 
 
                 get '/api/v1/books'
-
+                
                 expect(response).to have_http_status(:success)
-
+                
                 expect(response_body.size).to eq(2)
-
+                
                 expect(response_body).to eq([
                     {
                         "id" =>  1,
@@ -31,6 +31,24 @@ describe 'Books API', type: :request do
                         "author_name" =>  "Temesghen Bahta",
                         "author_age" =>  32
                     }
+                    ])
+                end
+                
+         it 'returns a subset of books based on limit' do
+            get '/api/v1/books', params: { limit: 1}
+
+            expect(response).to have_http_status(:success)
+        
+            expect(response_body.size).to eq(1)
+            
+            expect(response_body).to eq([
+                {
+                    "id" =>  1,
+                    "title" => "1984",
+                    "author_name" =>  "George Orwell",
+                    "author_age" =>  46
+                },
+               
                 ])
           end
     end
