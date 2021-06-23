@@ -1,11 +1,13 @@
 require 'rails_helper'
 
 describe 'Books API', type: :request do
+    let(:first_author) { FactoryBot.create(:author, first_name:'George', last_name: 'Orwell', age: 46 )}
+    let(:second_author) { FactoryBot.create(:author, first_name:'Temesghen', last_name: 'Bahta', age: 32 )}
 
     describe 'GET /books' do
         before do
-            FactoryBot.create(:book, title: '1984', author: 'George Orwell')
-            FactoryBot.create(:book, title: 'Current times', author: 'Temesghen')
+            FactoryBot.create(:book, title: '1984', author: first_author)
+            FactoryBot.create(:book, title: 'Current times', author: second_author)
             
         end
           it 'returns all books' do 
@@ -14,7 +16,22 @@ describe 'Books API', type: :request do
 
                 expect(response).to have_http_status(:success)
 
-                expect(JSON.parse(response.body).size).to eq(2)
+                expect(response_body.size).to eq(2)
+
+                expect(response_body).to eq([
+                    {
+                        "id" =>  1,
+                        "title" => "1984",
+                        "author_name" =>  "George Orwell",
+                        "author_age" =>  46
+                    },
+                    {
+                        "id" =>  2,
+                        "title" => "Current times",
+                        "author_name" =>  "Temesghen Bahta",
+                        "author_age" =>  32
+                    }
+                ])
           end
     end
 
@@ -29,11 +46,19 @@ describe 'Books API', type: :request do
 
             expect(response).to have_http_status(:created) #201
             expect(Author.count).to eq(1)
+
+            expect(response_body).to eq({
+                "id" =>  1,
+                "title" => "The Martian",
+                "author_name" =>  "Andy Weir",
+                "author_age" =>  46
+
+            })
         end
     end
 
     describe 'DELETE /books/:id' do
-        let!(:book) { FactoryBot.create(:book, title: 'Dummy Book', author: 'Dummy Author')}
+        let!(:book) { FactoryBot.create(:book, title: 'Dummy Book', author: first_author)}
         
         it 'deletes a book' do
            
