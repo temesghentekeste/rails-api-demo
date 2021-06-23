@@ -495,3 +495,34 @@ Running via Spring preloader in process 54138
 *******************************************************************************
 *******************************************************************************
 13. Creating Multiple Records in Controllers
+
+ Using TDD approach we can do as follows:
+  1.Change the Test for creating new book 
+    describe 'POST /books' do
+        it 'creates a new book' do
+           expect{
+            post '/api/v1/books', params: {
+                book: { title: 'The Martian'},
+                author: {first_name: 'Andy', last_name: 'Weir', age: 46}
+            }
+           }.to change { Book.count }.from(0).to(1)
+
+            expect(response).to have_http_status(:created) #201
+            expect(Author.count).to eq(1)
+        end
+    end
+
+ 2. Updte the controller create action:
+    def create 
+        # binding.irb
+        author = Author.create!(author_params)
+        book = Book.new(book_params.merge(author_id: author.id))
+
+        if book.save
+            render json: book, status: :created #201
+        else
+            render json: book.errors, status: :unprocessable_entity #422
+        end
+    end
+
+3. Run the test as follows: rspec spec/requests/books_spec.rb:21
