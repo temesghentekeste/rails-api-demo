@@ -407,10 +407,87 @@ rails db:migrate
    -> 0.0043s
 == 20210622212205 AddAuthorToBooks: migrated (0.0048s) ========================
 
-4. remove author from string
+4. remove author from Book model
  rails g migration remove_author_from_books author:string
 Running via Spring preloader in process 54138
       invoke  active_record
       create    db/migrate/20210622212951_remove_author_from_books.rb
 
       run migration
+
+
+*******************************************************************************
+*******************************************************************************
+12. Controller Representers: also called serializers
+  - Representer is a Rails service object that takes data and returns 
+  a hash that is ready to be used or represented by the contrllor.
+  - as_json  takes the hash and convert it to Representer and return it to the api client
+
+  steps: 
+   1. create a reprsenters folder inside app folder
+   2. create a representer file: example, books_representer.rb
+   3. create the representer class inside that file
+    For example: 
+            class BooksRepresenter
+                def initialize(books)
+                    @books = books
+                end
+
+                def as_json 
+                    books.map do |book| 
+                        {
+                            id: book.id,
+                            title: book.title,
+                            author_name: author_name(book),
+                            author_age: book.author.age 
+                        }
+
+                    end
+                end
+
+                private
+
+                attr_reader :books
+
+                def author_name(book)
+                    "#{book.author.first_name} #{book.author.last_name}"
+                end
+            end
+    
+    4. apply the representer inside your contrller class
+     For example: 
+
+     module Api
+        module V1
+            class BooksController < ApplicationController
+
+                def index
+                    books = Book.all
+                    render json: BooksRepresenter.new(books).as_json 
+                end
+
+                def create 
+                    book = Book.new(book_params)
+
+                    if book.save
+                    render json: book, status: :created #201
+                    else
+                    render json: book.errors, status: :unprocessable_entity #422
+                    end
+                end
+
+                def destroy 
+                    Book.find(params[:id]).destroy!
+
+                    head :no_content
+
+                end
+                    
+                private
+                
+                def book_params
+                    params.require(:book).permit(:title, :author)
+                end
+            end
+        end
+    end
