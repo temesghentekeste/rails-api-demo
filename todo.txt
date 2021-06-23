@@ -420,7 +420,7 @@ Running via Spring preloader in process 54138
 *******************************************************************************
 12. Controller Representers: also called serializers
   - Representer is a Rails service object that takes data and returns 
-  a hash that is ready to be used or represented by the contrllor.
+  a hash that is ready to be used or represented by the controller.
   - as_json  takes the hash and convert it to Representer and return it to the api client
 
   steps: 
@@ -491,3 +491,7 @@ Running via Spring preloader in process 54138
             end
         end
     end
+
+*******************************************************************************
+*******************************************************************************
+13. Creating Multiple Records in Controllers
