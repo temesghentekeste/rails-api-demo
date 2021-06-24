@@ -906,3 +906,7 @@ step III: modify the books controller:
         end
     end
     end
+********************************************************************************
+********************************************************************************
+
+Tutorial 21: curl -X POST http://localhost:3000/api/v1/authenticate -H "Content-Type:application/json" -d '{"username":"BookSeller99", "password":"password"}'
